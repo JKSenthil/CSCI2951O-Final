@@ -20,10 +20,10 @@ class CVRP:
         for route in routes:
             if len(route) == 0:
                 continue
-            cost += self.dist[0][route[0]]
+            cost += self.dist[0][route[0]] # manually add first edge (fr depot)
             for i in range(1, len(route)):
                 cost += self.dist[route[i-1]][route[i]]
-            cost += self.dist[route[-1]][0]
+            cost += self.dist[route[-1]][0] # manually add last edge (to depot)
         return round(cost, 2)
 
     def _cap_constraint(self, route):
@@ -34,6 +34,9 @@ class CVRP:
                 return False
         return True
 
+    '''
+    output of this fn is passed to compute_obj_value
+    '''
     def simulated_annealing(self, temperature=1, cooling_rate=0.95, max_iter=3000):
         def RHA(r):
             r_prime = [[i for i in row] for row in r] # same as deepcopy(r)
@@ -79,16 +82,23 @@ class CVRP:
                 print("not inserted")
             return r_prime
 
+        # beginning of sim_annealing fn
         routes = self._generate_initial_configV2()
         for i in range(len(routes)):
             if len(routes[i]) <= 1:
                 continue
             routes[i] = self._tsp_simulated_annealing(routes[i])
 
+        initial_routes = [[i for i in row] for row in routes] # same as deepcopy(routes)
         best_routes = [[i for i in row] for row in routes] # same as deepcopy(routes)
         min_cost = self.compute_obj_value(routes)
 
+        print('initial objective:', min_cost)
         for j in range(max_iter):
+<<<<<<< HEAD
+=======
+            # print(j)
+>>>>>>> e2837d5923575982b0b7aa95c45bdbf81ed2fd17
             new_routes = RHA(routes)
             for _ in range(4):
                 new_routes = RHA(new_routes)
@@ -101,12 +111,13 @@ class CVRP:
             if new_cost < min_cost:
                 best_routes = [[i for i in row] for row in new_routes]
                 min_cost = new_cost 
+                print('objective at iteration', j, ':', min_cost)
                 routes = new_routes
             elif math.exp((min_cost - new_cost) / temperature) < random():
                 routes = new_routes
             temperature *= cooling_rate
         
-        return best_routes
+        return initial_routes, best_routes
 
     def _generate_initial_config(self):
         routes = [[] for _ in range(self.num_vehicles)]
@@ -132,6 +143,10 @@ class CVRP:
 
         return routes
 
+    '''
+    output: 2d array called routes
+
+    '''
     def _generate_initial_configV2(self):
         def shuffle_tiny_bit(a, times=1):
             for _ in range(times):
@@ -145,9 +160,12 @@ class CVRP:
         customer_idxs = list(range(1,self.num_customers))
         customer_idxs.sort(key=lambda x : self.dist[x][0])
 
+        # each iteration of while loop is assigning a customer to a vehicle
         while customer_idxs:
-            idx = customer_idxs.pop(0)
+            idx = customer_idxs.pop(0) # id of customer we are trying to assign
             customer_allocated = False
+
+            # try to assign this customer to each vehicle
             for i in range(self.num_vehicles):
                 if rolling_capacities[i] + self.customer_demand[idx] <= self.vehicle_capacity:
                     rolling_capacities[i] += self.customer_demand[idx]
@@ -155,6 +173,7 @@ class CVRP:
                     customer_allocated = True
                     break
             
+            # if we fail to assign customer to vehicle, then reset, with some randomness
             if not customer_allocated:
                 routes = [[] for _ in range(self.num_vehicles)]
                 rolling_capacities = [0 for _ in range(self.num_vehicles)]
