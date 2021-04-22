@@ -89,11 +89,13 @@ class CVRP:
                 continue
             routes[i] = self._tsp_simulated_annealing(routes[i])
 
+        initial_routes = [[i for i in row] for row in routes] # same as deepcopy(routes)
         best_routes = [[i for i in row] for row in routes] # same as deepcopy(routes)
         min_cost = self.compute_obj_value(routes)
 
+        print('initial objective:', min_cost)
         for j in range(max_iter):
-            print(j)
+            # print(j)
             new_routes = RHA(routes)
             for _ in range(4):
                 new_routes = RHA(new_routes)
@@ -106,12 +108,13 @@ class CVRP:
             if new_cost < min_cost:
                 best_routes = [[i for i in row] for row in new_routes]
                 min_cost = new_cost 
+                print('objective at iteration', j, ':', min_cost)
                 routes = new_routes
             elif math.exp((min_cost - new_cost) / temperature) < random():
                 routes = new_routes
             temperature *= cooling_rate
         
-        return best_routes
+        return initial_routes, best_routes
 
     def _generate_initial_config(self):
         routes = [[] for _ in range(self.num_vehicles)]
