@@ -114,7 +114,6 @@ class CVRP:
                 routes = new_routes
             temperature *= cooling_rate
         
-        print('best routes:', best_routes)
         return initial_routes, best_routes
 
     def _generate_initial_config(self):

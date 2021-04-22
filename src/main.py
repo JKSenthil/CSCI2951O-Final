@@ -10,24 +10,26 @@ if __name__ == "__main__":
     cvrp = CVRP(*args)
 
     start_time = time.time()
-    routes = cvrp.simulated_annealing()
-    cost = cvrp.compute_obj_value(routes)
+    _, best_routes = cvrp.simulated_annealing()
+    best_cost = cvrp.compute_obj_value(best_routes)
 
+    # run SA 3 more times
     for _ in range(3):
-        routes2 = cvrp.simulated_annealing()
-        cost2 = cvrp.compute_obj_value(routes2)
-        if cost2 < cost:
-            routes = routes2
+        _, new_routes = cvrp.simulated_annealing()
+        new_cost = cvrp.compute_obj_value(new_routes)
+        if new_cost < best_cost:
+            best_routes = new_routes
+            best_cost = new_cost
 
     end_time = time.time()
 
     s = ""
-    for route in routes:
+    for route in best_routes:
         s += "0 "
         for e in route:
             s += str(e) + " "
         s += "0 "
     s = s[:-1]
 
-    print(f"Instance: {filename} Time: {end_time - start_time} Result: {cost} Solution: {s}")
+    print(f"Instance: {filename} Time: {end_time - start_time} Result: {best_cost} Solution: {s}")
     

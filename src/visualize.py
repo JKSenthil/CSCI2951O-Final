@@ -23,5 +23,7 @@ if __name__ == "__main__":
     
     initial_config, best_config = cvrp.simulated_annealing()
     
+    splt = filename.split('/')
+    filename = 'results' + '/' + splt[1]
     writeFile(filename + "_initial", initial_config, cvrp.compute_obj_value(initial_config))
     writeFile(filename, best_config, cvrp.compute_obj_value(best_config))
