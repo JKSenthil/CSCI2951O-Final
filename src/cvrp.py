@@ -37,7 +37,7 @@ class CVRP:
     '''
     output of this fn is passed to compute_obj_value
     '''
-    def simulated_annealing(self, temperature=1, cooling_rate=0.95, max_iter=10000):
+    def simulated_annealing(self, temperature=1, cooling_rate=0.95, max_iter=3000):
         def RHA(r):
             r_prime = [[i for i in row] for row in r] # same as deepcopy(r)
             highest_avg_customer_idx = -1
@@ -95,7 +95,10 @@ class CVRP:
 
         print('initial objective:', min_cost)
         for j in range(max_iter):
+<<<<<<< HEAD
+=======
             # print(j)
+>>>>>>> e2837d5923575982b0b7aa95c45bdbf81ed2fd17
             new_routes = RHA(routes)
             for _ in range(4):
                 new_routes = RHA(new_routes)
