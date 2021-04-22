@@ -85,17 +85,18 @@ class CVRP:
         # beginning of sim_annealing fn
         routes = self._generate_initial_configV2()
         for i in range(len(routes)):
+            # if there is <= 1 node assigned to vehicle i, then no need to solve tsp prob
+            # each vehicle represents a tsp prob to solve, after we have done step 1 (the bin packing)
             if len(routes[i]) <= 1:
                 continue
             routes[i] = self._tsp_simulated_annealing(routes[i])
 
         initial_routes = [[i for i in row] for row in routes] # same as deepcopy(routes)
         best_routes = [[i for i in row] for row in routes] # same as deepcopy(routes)
-        min_cost = self.compute_obj_value(routes)
+        min_cost = self.compute_obj_value(best_routes)
 
         print('initial objective:', min_cost)
-        for j in range(max_iter):
-            # print(j)
+        for j in range(max_iter): 
             new_routes = RHA(routes)
             for _ in range(4):
                 new_routes = RHA(new_routes)
