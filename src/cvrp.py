@@ -37,7 +37,7 @@ class CVRP:
     '''
     output of this fn is passed to compute_obj_value
     '''
-    def simulated_annealing(self, temperature=1, cooling_rate=0.99, max_iter=10000):
+    def simulated_annealing(self, temperature=1, cooling_rate=0.95, max_iter=3000):
         def RHA(r):
             r_prime = [[i for i in row] for row in r] # same as deepcopy(r)
             highest_avg_customer_idx = -1
@@ -83,7 +83,8 @@ class CVRP:
             return r_prime
 
         # beginning of sim_annealing fn
-        routes = self._generate_initial_configV2()
+        # routes = self._generate_initial_configV2()
+        routes = self._generate_initial_config()
         for i in range(len(routes)):
             # if there is <= 1 node assigned to vehicle i, then no need to solve tsp prob
             # each vehicle represents a tsp prob to solve, after we have done step 1 (the bin packing)
