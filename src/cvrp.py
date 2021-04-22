@@ -95,10 +95,7 @@ class CVRP:
 
         print('initial objective:', min_cost)
         for j in range(max_iter):
-<<<<<<< HEAD
-=======
             # print(j)
->>>>>>> e2837d5923575982b0b7aa95c45bdbf81ed2fd17
             new_routes = RHA(routes)
             for _ in range(4):
                 new_routes = RHA(new_routes)
