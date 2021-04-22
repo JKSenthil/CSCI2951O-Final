@@ -37,7 +37,7 @@ class CVRP:
     '''
     output of this fn is passed to compute_obj_value
     '''
-    def simulated_annealing(self, temperature=1, cooling_rate=0.95, max_iter=3000):
+    def simulated_annealing(self, temperature=1, cooling_rate=0.95, max_iter=10000):
         def RHA(r):
             r_prime = [[i for i in row] for row in r] # same as deepcopy(r)
             highest_avg_customer_idx = -1
