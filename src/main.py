@@ -31,5 +31,5 @@ if __name__ == "__main__":
         s += "0 "
     s = s[:-1]
 
-    print(f"Instance: {filename} Time: {end_time - start_time} Result: {best_cost} Solution: {s}")
+    print(f"Instance: {filename.split('/')[1]} Time: {end_time - start_time} Result: {best_cost} Solution: {s}")
     
