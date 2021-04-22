@@ -37,8 +37,8 @@ class CVRP:
     '''
     output of this fn is passed to compute_obj_value
     '''
-    def simulated_annealing(self, temperature=1, cooling_rate=0.95, max_iter=3000):
-        def RHA(r):
+    def simulated_annealing(self, temperature=1, cooling_rate=0.95, max_iter=10000):
+        def RHA(r, deterministicInsert=False):
             r_prime = [[i for i in row] for row in r] # same as deepcopy(r)
             highest_avg_customer_idx = -1
             route_idx = -1
@@ -67,24 +67,46 @@ class CVRP:
             assert route_idx != -1
 
             customer_idx = r_prime[route_idx].pop(highest_avg_customer_idx)
-
             route_idxs = list(range(len(r)))
             shuffle(route_idxs)
             inserted = False
-            for r_idx in route_idxs:
-                r_prime[r_idx].append(customer_idx)
-                if not self._cap_constraint(r_prime[r_idx]):
-                    r_prime[r_idx].pop()
-                else:
-                    inserted = True
-                    break
-            if not inserted:
-                print("not inserted")
-            return r_prime
+
+            if deterministicInsert:
+                for r_idx in route_idxs:
+                    # insert at the first place we have capacity
+                    if self._cap_constraint(r_prime[r_idx]):
+                        bestIndex = 0 # initially we put it at the first stop
+                        bestCost = (self.dist[0][customer_idx] + self.dist[customer_idx][r_prime[r_idx][0]]) - self.dist[0][r_prime[r_idx][0]] # lose an edge, add 2
+                        for j, stop in enumerate(r_prime[r_idx]):
+                            if newCost < bestCost:
+                                bestIndex = newIndex
+                                bestCost = newCost
+
+
+                        # after we've found the spot, insert the customer
+                        r_prime[r_idx].insert(bestIndex, customer_idx)    
+                        inserted = True
+                        break
+
+                if not inserted:
+                    print("not inserted")
+                return r_prime
+
+            else:
+                for r_idx in route_idxs:
+                    r_prime[r_idx].append(customer_idx)
+                    if not self._cap_constraint(r_prime[r_idx]):
+                        r_prime[r_idx].pop()
+                    else:
+                        inserted = True
+                        break
+                if not inserted:
+                    print("not inserted")
+                return r_prime
 
         # beginning of sim_annealing fn
-        # routes = self._generate_initial_configV2()
-        routes = self._generate_initial_config()
+        routes = self._generate_initial_configV2()
+        # routes = self._generate_initial_config()
         for i in range(len(routes)):
             # if there is <= 1 node assigned to vehicle i, then no need to solve tsp prob
             # each vehicle represents a tsp prob to solve, after we have done step 1 (the bin packing)
