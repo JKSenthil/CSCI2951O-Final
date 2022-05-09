@@ -1,3 +1,5 @@
 # CSCI2951O-Final Project
 
-Simulated Annealing Solver. Check the `presentation.pdf` files for details.
+Simulated Annealing Solver in Python. 
+
+Check the `presentation.pdf` files for details.
